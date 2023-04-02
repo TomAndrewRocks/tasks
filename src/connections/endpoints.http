@@ -1,0 +1,5 @@
+## Get All Tasks
+GET http://localhost:5555/api/tasks
+
+## Create A Task
+POST http://localhost:5555/api/tasks
