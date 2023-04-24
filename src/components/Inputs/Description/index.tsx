@@ -14,6 +14,7 @@ export const DescriptionInput: FC<ITextInput> = (
       size="small"
       name="description"
       multiline
+      value={props.value}
       rows={4}
       fullWidth
       disabled={props.disabled}

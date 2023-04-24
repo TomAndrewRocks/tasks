@@ -6,7 +6,7 @@ export interface ITask
   extends ITaskHeader,
     ITaskDescription,
     ITaskFooter {
-  id?: string;
+  _id?: string;
   priority: string;
   status?: string;
 }

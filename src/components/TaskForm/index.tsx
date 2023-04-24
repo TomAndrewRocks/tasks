@@ -19,19 +19,16 @@ import { SelectInput } from '../Inputs/SelectInput';
 import { TitleInput } from '../Inputs/TitleInput';
 import { Priority } from './enums/Priority';
 import { Status } from './enums/Status';
-import { useMutation } from '@tanstack/react-query';
-import { sendAPIRequest } from '../../services/sendAPIRequest';
 import { ICreateTask } from '../../interfaces/ICreateTask';
+import { api } from '../../services/api';
 
 export const TaskForm: FC = (): ReactElement => {
-  const serverURL = import.meta.env.VITE_SERVER;
-
   const [title, setTitle] = useState<string | undefined>(
-    undefined,
+    '',
   );
   const [description, setDescription] = useState<
     string | undefined
-  >(undefined);
+  >('');
   const [date, setDate] = useState<Date | null>(new Date());
   const [status, setStatus] = useState<string>(Status.todo);
   const [priority, setPriority] = useState<string>(
@@ -41,39 +38,54 @@ export const TaskForm: FC = (): ReactElement => {
   const [successReturn, setSuccessReturn] =
     useState<boolean>(false);
 
-  const createTaskMutation = useMutation(
-    (data: ICreateTask) =>
-      sendAPIRequest(`${serverURL}/tasks`, 'POST', data),
-  );
+  const [failReturn, setFailReturn] =
+    useState<boolean>(false);
+
+  const [loading, setLoading] = useState<boolean>(false);
 
   function handleNewTask() {
+    setLoading(true);
     if (!title || !date || !description) {
       return;
     }
 
-    const task: ICreateTask = {
-      title,
-      description,
-      date: date.toString(),
-      status,
-      priority,
-    };
-    createTaskMutation.mutate(task);
+    setTimeout(() => {
+      try {
+        const task: ICreateTask = {
+          title,
+          description,
+          date: date.toString(),
+          status,
+          priority,
+        };
+
+        api
+          .post(`/tasks`, task, {
+            headers: {
+              'content-type': 'text/json',
+            },
+          })
+          .then((res) => {
+            console.log(res);
+            setSuccessReturn(true);
+          })
+          .catch((err) => {
+            console.log(err);
+            setFailReturn(true);
+          });
+        setLoading(false);
+      } catch (error) {
+        console.log(error);
+      }
+    }, 1000);
   }
 
   useEffect(() => {
-    if (createTaskMutation.isSuccess) {
-      setSuccessReturn(true);
-    }
-
-    const successTimeout = setTimeout(() => {
+    if (title || description !== '') {
       setSuccessReturn(false);
-    }, 5000);
-
-    return () => {
-      clearTimeout(successTimeout);
-    };
-  }, [createTaskMutation.isSuccess]);
+      setFailReturn(false);
+    }
+  }, [title, description]);
 
   return (
     <Box
@@ -82,7 +94,7 @@ export const TaskForm: FC = (): ReactElement => {
       alignItems={'flex-start'}
       width={'100%'}
       px={4}
-      my={6}
+      my={successReturn || failReturn ? -2.5 : 2}
     >
       {successReturn && (
         <Alert
@@ -93,20 +105,31 @@ export const TaskForm: FC = (): ReactElement => {
           Task successfully created!
         </Alert>
       )}
+      {failReturn && (
+        <Alert
+          severity="error"
+          sx={{ width: '100%', marginBottom: '16px' }}
+        >
+          <AlertTitle>Error</AlertTitle>
+          Failed to create Task!
+        </Alert>
+      )}
       <Typography mb={2} variant="h6" component={'h2'}>
         Create a Task
       </Typography>
       <Stack sx={{ width: '100%' }} spacing={2}>
         <TitleInput
-          disabled={createTaskMutation.isLoading}
+          value={title}
+          disabled={loading}
           onChange={(e) => setTitle(e.target.value)}
         />
         <DescriptionInput
-          disabled={createTaskMutation.isLoading}
+          value={description}
+          disabled={loading}
           onChange={(e) => setDescription(e.target.value)}
         />
         <DateInput
-          disabled={createTaskMutation.isLoading}
+          disabled={loading}
           value={date}
           onChange={(date) => setDate(date)}
         />
@@ -119,9 +142,9 @@ export const TaskForm: FC = (): ReactElement => {
         >
           <SelectInput
             value={status}
-            disabled={createTaskMutation.isLoading}
             name="Status"
             label={'Status'}
+            disabled={loading}
             items={[
               {
                 value: Status.todo,
@@ -141,10 +164,10 @@ export const TaskForm: FC = (): ReactElement => {
             }
           />
           <SelectInput
-            disabled={createTaskMutation.isLoading}
             name="Priority"
             label="Priority"
             value={priority}
+            disabled={loading}
             items={[
               {
                 value: Priority.low,
@@ -164,7 +187,7 @@ export const TaskForm: FC = (): ReactElement => {
             }
           />
         </Stack>
-        {createTaskMutation.isLoading && <LinearProgress />}
+        {loading && <LinearProgress />}
         <Button
           variant="contained"
           size="large"
@@ -175,7 +198,8 @@ export const TaskForm: FC = (): ReactElement => {
             !date ||
             !description ||
             !status ||
-            !priority
+            !priority ||
+            loading
           }
         >
           Create task

@@ -13,6 +13,7 @@ export const TitleInput: FC<ITextInput> = (
       label="Task Title"
       size="small"
       name="title"
+      value={props.value}
       fullWidth
       disabled={props.disabled}
       onChange={props.onChange}

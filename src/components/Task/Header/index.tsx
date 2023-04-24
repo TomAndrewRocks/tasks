@@ -7,7 +7,6 @@ export const TaskHeader: FC<ITaskHeader> = (
   props,
 ): ReactElement => {
   const { title = 'Task Title', date = new Date() } = props;
-
   return (
     <Box
       display={'flex'}

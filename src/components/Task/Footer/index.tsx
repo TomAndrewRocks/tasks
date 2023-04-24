@@ -4,10 +4,16 @@ import {
   FormControlLabel,
   Switch,
 } from '@mui/material';
-import React from 'react';
+import React, { useState } from 'react';
 import { ITaskFooter } from '../../../interfaces/ITaskFooter';
+import { Status } from '../../TaskForm/enums/Status';
 
-const TaskFooter = ({ onChange, onClick }: ITaskFooter) => {
+const TaskFooter = ({
+  onChange,
+  onClick,
+  check,
+  onCheck,
+}: ITaskFooter) => {
   return (
     <Box
       display={'flex'}
@@ -16,8 +22,9 @@ const TaskFooter = ({ onChange, onClick }: ITaskFooter) => {
       mt={4}
     >
       <FormControlLabel
-        label="In Progress"
+        label={check ? Status.inProgress : Status.todo}
         onChange={onChange}
+        onClick={onCheck}
         control={<Switch color="warning" />}
       />
       <Button
