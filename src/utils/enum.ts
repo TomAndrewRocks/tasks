@@ -1,11 +1,11 @@
 export enum Priority {
-  high = 'high',
-  normal = 'normal',
-  low = 'low',
+  high = 'High',
+  normal = 'Normal',
+  low = 'Low',
 }
 
 export enum Status {
-  todo = 'todo',
-  inProgress = 'inProgress',
-  completed = 'completed',
+  todo = 'To Do',
+  inProgress = 'In Progress',
+  completed = 'Completed',
 }

@@ -22,7 +22,7 @@ const createTask = async (req: Request, res: Response) => {
   } catch (error) {
     return res
       .status(500)
-      .json({ msg: 'Failed to create game!' });
+      .json({ msg: 'Failed to create task!' });
   }
 };
 
@@ -65,7 +65,7 @@ const updateTask = (
           .catch((error) => {
             return res
               .status(404)
-              .json({ message: 'Task not found' });
+              .json({ message: 'A problem was found during the selected Task update' });
           });
       }
       return;
