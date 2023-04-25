@@ -1,8 +1,6 @@
 import { TaskCounterStatusType } from './ITaskCounter';
 
 export interface ITaskFooter {
-  onChange?: () => void;
-  onClick?: () => void;
+  _id?: string;
   check: boolean;
-  onCheck: () => void;
 }

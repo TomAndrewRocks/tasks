@@ -9,7 +9,6 @@ export const TaskCounter: FC<ITaskCounter> = (
   props,
 ): ReactElement => {
   const { status = Status.completed, count = 0 } = props;
-
   return (
     <Box
       display={'flex'}
@@ -28,7 +27,7 @@ export const TaskCounter: FC<ITaskCounter> = (
         }}
       >
         <Typography color="#fff" variant="h4">
-          {count}
+          {count >= 0 ? count : ''}
         </Typography>
       </Avatar>
       <Typography

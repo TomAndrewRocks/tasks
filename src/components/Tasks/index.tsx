@@ -1,15 +1,22 @@
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, Grid } from '@mui/material';
 import { format } from 'date-fns';
-import React, { useEffect, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import { TaskItem } from '../Task';
 import { TaskCounter } from '../TaskCounter';
 import { api } from '../../services/api';
 import { ITask } from '../../interfaces/ITask';
-import { Status } from '../TaskForm/enums/Status';
 
 export const TasksView = () => {
   const [tasks, setTasks] = useState<ITask[]>([]);
-  const [check, setChecked] = useState<boolean>(false);
+  const [todoCount, setTodoCount] = useState(0);
+  const [inProgressCount, setInProgressCount] = useState(0);
+  const [completedCount, setCompletedCount] = useState(0);
+  const [isChecked, setIsChecked] =
+    useState<boolean>(false);
 
   const fetchData = async () => {
     try {
@@ -20,33 +27,34 @@ export const TasksView = () => {
     }
   };
 
-  const updateTaskStatus = (taskId: string | undefined) => {
-    if (!check) {
-      api
-        .put(`/tasks/${taskId}`, {
-          status: Status.inProgress,
-        })
-        .then(() => {
-          fetchData();
-        });
-    } else {
-      api
-        .put(`/tasks/${taskId}`, {
-          status: Status.todo,
-        })
-        .then(() => {
-          fetchData();
-        });
-    }
-  };
-
   useEffect(() => {
     fetchData();
   }, []);
 
+  const getStatusLength = () => {
+    if (tasks) {
+      const todoArray = tasks.filter(
+        (task) => task.status === 'To Do',
+      );
+      const inProgArray = tasks.filter(
+        (task) => task.status === 'In Progress',
+      );
+      const completeArray = tasks.filter(
+        (task) => task.status === 'Completed',
+      );
+      setTodoCount(todoArray.length);
+      setInProgressCount(inProgArray.length);
+      setCompletedCount(completeArray.length);
+    }
+  };
+
+  useEffect(() => {
+    getStatusLength();
+  }, [tasks]);
+
   return (
     <Grid item md={8} px={4}>
-      <Box mb={8} px={8} width={500}>
+      <Box mb={8} px={8} width={500} ml={8}>
         <h2>
           Tasks Status:
           <br />
@@ -68,15 +76,25 @@ export const TasksView = () => {
           md={10}
           xs={12}
           mb={8}
+          ml={2}
         >
           <Box>
-            <TaskCounter />
+            <TaskCounter
+              count={todoCount}
+              status={'To Do'}
+            />
           </Box>
           <Box>
-            <TaskCounter />
+            <TaskCounter
+              count={inProgressCount}
+              status={'In Progress'}
+            />
           </Box>
           <Box>
-            <TaskCounter />
+            <TaskCounter
+              count={completedCount}
+              status={'Completed'}
+            />
           </Box>
         </Grid>
         <Grid
@@ -89,14 +107,13 @@ export const TasksView = () => {
           {tasks.map((task) => (
             <Box key={task._id}>
               <TaskItem
-                check={check}
+                _id={task._id}
+                date={task.date}
                 title={task.title}
                 description={task.description}
                 status={task.status}
                 priority={task.priority}
-                onCheck={() => setChecked(!check)}
-                onChange={() => updateTaskStatus(task._id)}
-                onClick={() => updateTaskStatus(task._id)}
+                check={isChecked}
               />
             </Box>
           ))}

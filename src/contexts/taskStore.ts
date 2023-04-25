@@ -3,14 +3,15 @@ import { persist } from 'zustand/middleware';
 
 type taskKeyStore = {
   check: boolean;
-  onCheck: (val: boolean) => void;
+  onCheck: () => void;
 };
 
 export const useTaskStore = create<taskKeyStore>(
   persist(
     (set) => ({
       check: false,
-      onCheck: (val) => set({ check: val }),
+      onCheck: () =>
+        set((state) => ({ check: !state.check })),
     }),
     { name: 'task-list' },
   ),

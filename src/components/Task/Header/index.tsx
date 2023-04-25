@@ -2,6 +2,7 @@ import { Box, Chip, Typography } from '@mui/material';
 import { format } from 'date-fns';
 import React, { FC, ReactElement } from 'react';
 import { ITaskHeader } from '../../../interfaces/ITaskHeader';
+import moment from 'moment';
 
 export const TaskHeader: FC<ITaskHeader> = (
   props,
@@ -20,7 +21,9 @@ export const TaskHeader: FC<ITaskHeader> = (
       <Box>
         <Chip
           variant="outlined"
-          label={format(date, 'PPP')}
+          label={moment(date).format(
+            'MMMM Do YYYY, h:mm:ss a',
+          )}
         />
       </Box>
     </Box>

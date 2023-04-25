@@ -1,20 +1,18 @@
 import { Box, Typography } from '@mui/material';
-import React, { FC, ReactElement } from 'react';
+import React from 'react';
 import { borderOverPriority } from '../../helpers/borderOverPriority';
 import { ITask } from '../../interfaces/ITask';
 import TaskFooter from './Footer';
 import { TaskHeader } from './Header';
-import { Status } from '../TaskForm/enums/Status';
 
 export const TaskItem = ({
-  check,
   priority,
   title,
   date,
   description,
-  onChange,
-  onClick,
-  onCheck,
+  _id,
+  check,
+  setIsChecked,
 }: ITask) => {
   return (
     <Box
@@ -26,10 +24,9 @@ export const TaskItem = ({
       p={3}
       sx={{
         width: '100%',
-        background: '#131313',
+        background: '#161616',
         borderRadius: '8px',
-        border: '1px solid',
-        borderColor: borderOverPriority(priority),
+        border: '1px solid transparent',
       }}
     >
       <TaskHeader title={title} date={date} />
@@ -42,14 +39,23 @@ export const TaskItem = ({
           <Typography>{description}</Typography>
         </Box>
         <Box>
-          <Typography>{priority.charAt(0).toUpperCase() + priority.slice(1)}</Typography>
+          <Typography
+            sx={{
+              border: '1px solid transparent',
+              padding: 0.8,
+              borderRadius: 2,
+              borderColor: borderOverPriority(priority),
+            }}
+          >
+            {priority.charAt(0).toUpperCase() +
+              priority.slice(1)}
+          </Typography>
         </Box>
       </Box>
       <TaskFooter
+        _id={_id}
         check={check}
-        onCheck={onCheck}
-        onChange={onChange}
-        onClick={onClick}
+        setIsChecked={setIsChecked}
       />
     </Box>
   );

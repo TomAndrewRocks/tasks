@@ -1,4 +1,5 @@
 import { Status } from '../components/TaskForm/enums/Status';
+import { ITask } from './ITask';
 
 export type TaskCounterStatusType =
   | Status.todo
@@ -7,5 +8,5 @@ export type TaskCounterStatusType =
 
 export interface ITaskCounter {
   count?: number;
-  status?: TaskCounterStatusType;
+  status?: TaskCounterStatusType | any;
 }
