@@ -8,10 +8,10 @@ import React, { useEffect, useState } from 'react';
 import { ITaskFooter } from '../../../interfaces/ITaskFooter';
 import { Status } from '../../TaskForm/enums/Status';
 import { api } from '../../../services/api';
-import { useToggle } from '../../../hooks/useToggle';
 
 const TaskFooter = ({ _id }: ITaskFooter) => {
-  const [isChecked, setIsChecked] = useToggle(false);
+  const [isChecked, setIsChecked] =
+    useState<boolean>(false);
   const [isCompleted, setIsCompleted] =
     useState<boolean>(false);
 
@@ -56,7 +56,7 @@ const TaskFooter = ({ _id }: ITaskFooter) => {
       const res = await api.get(`/tasks/${_id}`);
       const status = res.data.task.status;
       if (status !== 'To Do') {
-        setIsChecked(false);
+        setIsChecked(true);
       }
       if (status === 'Completed') {
         setIsCompleted(true);
