@@ -12,7 +12,6 @@ export const TaskItem = ({
   description,
   _id,
   check,
-  setIsChecked,
 }: ITask) => {
   return (
     <Box
@@ -52,11 +51,7 @@ export const TaskItem = ({
           </Typography>
         </Box>
       </Box>
-      <TaskFooter
-        _id={_id}
-        check={check}
-        setIsChecked={setIsChecked}
-      />
+      <TaskFooter _id={_id} check={check} />
     </Box>
   );
 };
