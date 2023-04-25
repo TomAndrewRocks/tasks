@@ -8,8 +8,18 @@ import React, { useEffect, useState } from 'react';
 import { ITaskFooter } from '../../../interfaces/ITaskFooter';
 import { Status } from '../../TaskForm/enums/Status';
 import { api } from '../../../services/api';
+import { useTaskStore } from '../../../contexts/taskStore';
 
 const TaskFooter = ({ _id }: ITaskFooter) => {
+  const {
+    addToInProgress,
+    addToCompleted,
+    addToPending,
+    removeFromCompleted,
+    removeFromPending,
+    removeFromProgress,
+  } = useTaskStore();
+
   const [isChecked, setIsChecked] =
     useState<boolean>(false);
   const [isCompleted, setIsCompleted] =
@@ -21,6 +31,11 @@ const TaskFooter = ({ _id }: ITaskFooter) => {
       api.put(`/tasks/${_id}`, {
         status: Status.inProgress,
       });
+      if (_id) {
+        addToInProgress(_id);
+        removeFromPending(_id);
+        removeFromCompleted(_id);
+      }
     } else {
       api
         .put(`/tasks/${_id}`, {
@@ -28,6 +43,11 @@ const TaskFooter = ({ _id }: ITaskFooter) => {
         })
         .then(() => {
           setIsCompleted(false);
+          if (_id) {
+            addToPending(_id);
+            removeFromProgress(_id);
+            removeFromCompleted(_id);
+          }
         });
     }
   };
@@ -41,11 +61,24 @@ const TaskFooter = ({ _id }: ITaskFooter) => {
         .then(() => {
           setIsChecked(true);
           setIsCompleted(true);
+          if (_id) {
+            addToCompleted(_id);
+            removeFromProgress(_id);
+            removeFromPending(_id);
+          }
         });
     } else {
-      api.put(`/tasks/${_id}`, {
-        status: Status.todo,
-      });
+      api
+        .put(`/tasks/${_id}`, {
+          status: Status.todo,
+        })
+        .then(() => {
+          if (_id) {
+            addToPending(_id);
+            removeFromProgress(_id);
+            removeFromCompleted(_id);
+          }
+        });
       setIsCompleted(false);
       setIsChecked(false);
     }
