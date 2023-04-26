@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
 import taskModel from '../models/taskModel';
-import { validationResult } from 'express-validator';
 
 const getAllTasks = async (req: Request, res: Response) => {
   const tasks = await taskModel.find();
@@ -12,17 +11,30 @@ const getAllTasks = async (req: Request, res: Response) => {
 };
 
 const createTask = async (req: Request, res: Response) => {
-  const newTask = await taskModel.create(req.body);
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
+  const { title, description, status, priority } = req.body;
+
   try {
-    return res.status(201).json(newTask);
+    const taskTitleExists = await taskModel.findOne({ title });
+
+    if (taskTitleExists) {
+      return res.status(400).json({
+        error: 'Oops',
+        message: 'Task already registered',
+      });
+    }
+
+    const task = await taskModel.create({
+      title,
+      description,
+      priority,
+      status,
+    });
+    return res.status(201).json(task);
   } catch (error) {
-    return res
-      .status(500)
-      .json({ msg: 'Failed to create task!' });
+    return res.status(500).send({
+      error: 'Task register failed',
+      message: error,
+    });
   }
 };
 
@@ -63,9 +75,10 @@ const updateTask = (
             return res.status(201).json({ task });
           })
           .catch((error) => {
-            return res
-              .status(404)
-              .json({ message: 'A problem was found during the selected Task update' });
+            return res.status(404).json({
+              message:
+                'Failed update of the selected Task',
+            });
           });
       }
       return;
@@ -86,11 +99,9 @@ const deleteTask = (
       .findByIdAndDelete(taskId)
       .then((task) =>
         task
-          ? res
-              .status(204)
-              .json({
-                message: `Task: ${task} was deleted`,
-              })
+          ? res.status(204).json({
+              message: `Task: ${task} was deleted`,
+            })
           : res
               .status(404)
               .json({ message: 'Task not found!' }),

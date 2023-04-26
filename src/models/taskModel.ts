@@ -18,7 +18,6 @@ const TaskSchema = new Schema<ITask>({
   date: {
     type: Date,
     default: Date.now(),
-    required: true,
   },
   description: {
     type: String,
