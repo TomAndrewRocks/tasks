@@ -23,19 +23,6 @@ export const TaskCounter: FC<ITaskCounter> = (
   const { inProgressTask, todoTask, completedTask } =
     useTaskStore();
 
-  // const fetchData = async () => {
-  //   try {
-  //     const response = await api.get('/tasks');
-  //     setPendingCount(response.data.length);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   fetchData();
-  // }, [todoTask]);
-
   useEffect(() => {
     setPendingCount(todoTask.length);
     setInProgressCount(inProgressTask.length);

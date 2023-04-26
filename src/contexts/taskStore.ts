@@ -1,5 +1,5 @@
 import create from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, devtools } from 'zustand/middleware';
 
 type taskKeyStore = {
   todoTask: string[];
@@ -14,48 +14,56 @@ type taskKeyStore = {
 };
 
 export const useTaskStore = create<taskKeyStore>(
-  persist(
-    (set) => ({
-      todoTask: [],
-      inProgressTask: [],
-      completedTask: [],
-      addToPending: (id: string) => {
-        set((state) => ({
-          todoTask: [...state.todoTask, id],
-        }));
-      },
-      addToInProgress: (id: string) => {
-        set((state) => ({
-          inProgressTask: [...state.inProgressTask, id],
-        }));
-      },
-      addToCompleted: (id: string) => {
-        set((state) => ({
-          completedTask: [...state.completedTask, id],
-        }));
-      },
-      removeFromPending: (id: string) => {
-        set((state) => ({
-          todoTask: state.todoTask.filter(
-            (idTask) => idTask != id,
-          ),
-        }));
-      },
-      removeFromProgress: (id: string) => {
-        set((state) => ({
-          inProgressTask: state.inProgressTask.filter(
-            (idTask) => idTask != id,
-          ),
-        }));
-      },
-      removeFromCompleted: (id: string) => {
-        set((state) => ({
-          completedTask: state.completedTask.filter(
-            (idTask) => idTask != id,
-          ),
-        }));
-      },
-    }),
-    { name: 'task-list' },
+  devtools(
+    persist(
+      (set) => ({
+        todoTask: [],
+        inProgressTask: [],
+        completedTask: [],
+        fetchTasks: async (url: string) => {
+          const response = await fetch(
+            `${import.meta.env.VITE_SERVER}/tasks`,
+          );
+          set({ todoTask: await response.json() });
+        },
+        addToPending: (id: string) => {
+          set((state) => ({
+            todoTask: [...state.todoTask, id],
+          }));
+        },
+        addToInProgress: (id: string) => {
+          set((state) => ({
+            inProgressTask: [...state.inProgressTask, id],
+          }));
+        },
+        addToCompleted: (id: string) => {
+          set((state) => ({
+            completedTask: [...state.completedTask, id],
+          }));
+        },
+        removeFromPending: (id: string) => {
+          set((state) => ({
+            todoTask: state.todoTask.filter(
+              (idTask) => idTask != id,
+            ),
+          }));
+        },
+        removeFromProgress: (id: string) => {
+          set((state) => ({
+            inProgressTask: state.inProgressTask.filter(
+              (idTask) => idTask != id,
+            ),
+          }));
+        },
+        removeFromCompleted: (id: string) => {
+          set((state) => ({
+            completedTask: state.completedTask.filter(
+              (idTask) => idTask != id,
+            ),
+          }));
+        },
+      }),
+      { name: 'task-list' },
+    ),
   ),
 );
