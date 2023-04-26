@@ -10,6 +10,7 @@ import { emitLabel } from '../../helpers/emitLabel';
 import { ITaskCounter } from '../../interfaces/ITaskCounter';
 import { Status } from '../TaskForm/enums/Status';
 import { useTaskStore } from '../../contexts/taskStore';
+import { api } from '../../services/api';
 
 export const TaskCounter: FC<ITaskCounter> = (
   props,
@@ -22,11 +23,23 @@ export const TaskCounter: FC<ITaskCounter> = (
   const { inProgressTask, todoTask, completedTask } =
     useTaskStore();
 
+  // const fetchData = async () => {
+  //   try {
+  //     const response = await api.get('/tasks');
+  //     setPendingCount(response.data.length);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   fetchData();
+  // }, [todoTask]);
+
   useEffect(() => {
     setPendingCount(todoTask.length);
     setInProgressCount(inProgressTask.length);
     setCompletedCount(completedTask.length);
-    console.log(todoTask)
   }, [todoTask, inProgressTask, completedTask]);
 
   return (

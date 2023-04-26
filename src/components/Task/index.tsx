@@ -11,7 +11,6 @@ export const TaskItem = ({
   date,
   description,
   _id,
-  check,
 }: ITask) => {
   return (
     <Box
@@ -51,7 +50,7 @@ export const TaskItem = ({
           </Typography>
         </Box>
       </Box>
-      <TaskFooter _id={_id} check={check} />
+      <TaskFooter _id={_id} />
     </Box>
   );
 };

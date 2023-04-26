@@ -13,23 +13,23 @@ import React, {
   useState,
   useEffect,
 } from 'react';
-import { DateInput } from '../Inputs/DateInput';
 import { DescriptionInput } from '../Inputs/Description';
 import { SelectInput } from '../Inputs/SelectInput';
 import { TitleInput } from '../Inputs/TitleInput';
 import { Priority } from './enums/Priority';
 import { Status } from './enums/Status';
-import { ICreateTask } from '../../interfaces/ICreateTask';
 import { api } from '../../services/api';
+import { useTaskStore } from '../../contexts/taskStore';
 
 export const TaskForm: FC = (): ReactElement => {
+  const { addToPending } = useTaskStore();
+
   const [title, setTitle] = useState<string | undefined>(
     '',
   );
   const [description, setDescription] = useState<
     string | undefined
   >('');
-  const [date, setDate] = useState<Date | null>(new Date());
   const [status, setStatus] = useState<string>(Status.todo);
   const [priority, setPriority] = useState<string>(
     Priority.normal,
@@ -45,39 +45,35 @@ export const TaskForm: FC = (): ReactElement => {
 
   function handleNewTask() {
     setLoading(true);
-    if (!title || !date || !description) {
+    if (!title || !description) {
       return;
     }
 
     setTimeout(() => {
       try {
-        const task: ICreateTask = {
-          title,
-          description,
-          date: date.toString(),
-          status,
-          priority,
-        };
-
         api
-          .post(`/tasks`, task, {
-            headers: {
-              'content-type': 'text/json',
-            },
+          .post(`/tasks`, {
+            title: title,
+            description: description,
+            status: status,
+            priority: priority,
           })
           .then((res) => {
             console.log(res);
             setSuccessReturn(true);
+            addToPending(res.data._id);
           })
           .catch((err) => {
             console.log(err);
             setFailReturn(true);
+          })
+          .finally(() => {
+            setLoading(false);
           });
-        setLoading(false);
       } catch (error) {
         console.log(error);
       }
-    }, 1000);
+    }, 500);
   }
 
   useEffect(() => {
@@ -85,6 +81,7 @@ export const TaskForm: FC = (): ReactElement => {
       setSuccessReturn(false);
       setFailReturn(false);
     }
+    console.log(title, description, status, priority);
   }, [title, description]);
 
   return (
@@ -128,11 +125,7 @@ export const TaskForm: FC = (): ReactElement => {
           disabled={loading}
           onChange={(e) => setDescription(e.target.value)}
         />
-        <DateInput
-          disabled={loading}
-          value={date}
-          onChange={(date) => setDate(date)}
-        />
+
         <Stack
           sx={{
             width: '100%',
@@ -195,7 +188,6 @@ export const TaskForm: FC = (): ReactElement => {
           onClick={handleNewTask}
           disabled={
             !title ||
-            !date ||
             !description ||
             !status ||
             !priority ||

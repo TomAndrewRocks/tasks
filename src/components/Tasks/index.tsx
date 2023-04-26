@@ -1,23 +1,21 @@
 import { Box, Grid } from '@mui/material';
-import { format } from 'date-fns';
-import React, {
-  useCallback,
-  useEffect,
-  useState,
-} from 'react';
+import React, { useEffect, useState } from 'react';
 import { TaskItem } from '../Task';
 import { TaskCounter } from '../TaskCounter';
 import { api } from '../../services/api';
 import { ITask } from '../../interfaces/ITask';
+import moment from 'moment';
+import { useTaskStore } from '../../contexts/taskStore';
 
 export const TasksView = () => {
+
+  const {todoTask} = useTaskStore()
+
   const [tasks, setTasks] = useState<ITask[]>([]);
   const [todoCount, setTodoCount] = useState(0);
   const [inProgressCount, setInProgressCount] = useState(0);
   const [completedCount, setCompletedCount] = useState(0);
-  const [isChecked, setIsChecked] =
-    useState<boolean>(false);
-
+ 
   const fetchData = async () => {
     try {
       const response = await api.get('/tasks');
@@ -29,7 +27,7 @@ export const TasksView = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [todoTask]);
 
   const getStatusLength = () => {
     if (tasks) {
@@ -56,9 +54,9 @@ export const TasksView = () => {
     <Grid item md={8} px={4}>
       <Box mb={8} px={8} width={500} ml={8}>
         <h2>
-          Tasks Status:
+          Tasks Manager!
           <br />
-          {format(new Date(), 'PPPP')}
+          Date: {moment(Date.now()).format('MM / DD / YYYY')}
         </h2>
       </Box>
       <Grid
@@ -113,7 +111,6 @@ export const TasksView = () => {
                 description={task.description}
                 status={task.status}
                 priority={task.priority}
-                check={isChecked}
               />
             </Box>
           ))}
