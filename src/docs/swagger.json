@@ -1,0 +1,119 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "API for the Tasks App. Bootstrapped with Express and MongoDB.",
+        "description": "A minimal and easy to follow example of what you need to create a CRUD API in Node.js using Typescript",
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        }
+    },
+    "host": "localhost:5555/api",
+    "basePath": "",
+    "tags": [
+        {
+            "name": "Tasks",
+            "description": "API for tasks app!"
+        }
+    ],
+    "consumes": [
+      "application/json"  
+    ],
+    "produces":[
+        "application/json"
+    ],
+    "definitions": {
+        "Users": {
+            "properties": {
+                "username":{
+                    "type": "string"
+                },
+                "email":{
+                    "type": "string"
+                },
+                "authentication": {
+                  "properties": {
+                     "password": {
+                        "type": "string"
+                    },
+                     "salt": {
+                        "type": "string"
+                    },
+                    "sessionToken": {
+                        "type": "string"
+                    }
+                  },
+                  "type": "object"
+                }
+            }
+        },
+        "Tasks": {
+            "properties": {
+                "title":{
+                    "type": "string"
+                },
+                "description":{
+                    "type": "string"
+                },
+                "date":{
+                    "type": "string"
+                },
+                "status":{
+                    "type": "string"
+                },
+                "priority": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "paths": {
+        "/tasks": {
+            "get": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Get All Tasks",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema":{
+                            "$ref": "#/definitions/Tasks"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Create a new Task",
+                "parameters": [
+                  {
+                    "in": "body",
+                    "name": "Tasks",
+                    "description": "Create your tasks",
+                    "schema": {
+                        "$ref": "#/definitions/Tasks"
+                    }
+                  }
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/Tasks"
+                        }
+                    },
+                    "400": {
+                        "description": "Failed. Task already created!"
+                    }
+                }
+            }
+        }
+    }
+}

@@ -6,6 +6,8 @@ import express, {
 } from 'express';
 import { app } from './app';
 import dotenv from 'dotenv';
+import swaggerUi from 'swagger-ui-express';
+import swaggerDocument from './docs/swagger.json';
 
 dotenv.config();
 
@@ -32,6 +34,11 @@ const startServer = async () => {
       },
     );
     app.use(express.json());
+    app.use(
+      '/swagger',
+      swaggerUi.serve,
+      swaggerUi.setup(swaggerDocument),
+    );
     app.listen(port, () =>
       console.log(`Server running on ${port}`),
     );
