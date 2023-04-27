@@ -11,6 +11,7 @@ export const TaskItem = ({
   date,
   description,
   _id,
+  data,
 }: ITask) => {
   return (
     <Box
@@ -18,7 +19,7 @@ export const TaskItem = ({
       width={'100%'}
       justifyContent={'flex-start'}
       flexDirection={'column'}
-      mb={4}
+      mb={3}
       p={3}
       sx={{
         width: '100%',
@@ -50,7 +51,7 @@ export const TaskItem = ({
           </Typography>
         </Box>
       </Box>
-      <TaskFooter _id={_id} />
+      <TaskFooter _id={_id} data={data} />
     </Box>
   );
 };

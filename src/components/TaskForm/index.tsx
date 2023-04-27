@@ -22,8 +22,6 @@ import { api } from '../../services/api';
 import { useTaskStore } from '../../contexts/taskStore';
 
 export const TaskForm: FC = (): ReactElement => {
-  const { addToPending } = useTaskStore();
-
   const [title, setTitle] = useState<string | undefined>(
     '',
   );
@@ -58,10 +56,8 @@ export const TaskForm: FC = (): ReactElement => {
             status: status,
             priority: priority,
           })
-          .then((res) => {
-            console.log(res);
+          .then(() => {
             setSuccessReturn(true);
-            addToPending(res.data._id);
           })
           .catch((err) => {
             console.log(err);
@@ -81,7 +77,6 @@ export const TaskForm: FC = (): ReactElement => {
       setSuccessReturn(false);
       setFailReturn(false);
     }
-    console.log(title, description, status, priority);
   }, [title, description]);
 
   return (

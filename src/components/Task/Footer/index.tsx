@@ -10,14 +10,14 @@ import { Status } from '../../TaskForm/enums/Status';
 import { api } from '../../../services/api';
 import { useTaskStore } from '../../../contexts/taskStore';
 
-const TaskFooter = ({ _id }: ITaskFooter) => {
+const TaskFooter = ({ _id, data }: ITaskFooter) => {
   const {
-    addToInProgress,
-    addToCompleted,
     addToPending,
-    removeFromCompleted,
     removeFromPending,
-    removeFromProgress,
+    addToCompleted,
+    removeFromCompleted,
+    addToInProgress,
+    removeFromInProgress,
   } = useTaskStore();
 
   const [isChecked, setIsChecked] =
@@ -31,11 +31,9 @@ const TaskFooter = ({ _id }: ITaskFooter) => {
       api.put(`/tasks/${_id}`, {
         status: Status.inProgress,
       });
-      if (_id) {
-        addToInProgress(_id);
-        removeFromPending(_id);
-        removeFromCompleted(_id);
-      }
+      addToInProgress();
+      removeFromPending();
+      removeFromCompleted();
     } else {
       api
         .put(`/tasks/${_id}`, {
@@ -43,11 +41,9 @@ const TaskFooter = ({ _id }: ITaskFooter) => {
         })
         .then(() => {
           setIsCompleted(false);
-          if (_id) {
-            addToPending(_id);
-            removeFromProgress(_id);
-            removeFromCompleted(_id);
-          }
+          addToPending();
+          removeFromCompleted();
+          removeFromInProgress();
         });
     }
   };
@@ -61,11 +57,9 @@ const TaskFooter = ({ _id }: ITaskFooter) => {
         .then(() => {
           setIsChecked(true);
           setIsCompleted(true);
-          if (_id) {
-            addToCompleted(_id);
-            removeFromProgress(_id);
-            removeFromPending(_id);
-          }
+          addToCompleted();
+          removeFromInProgress();
+          removeFromPending();
         });
     } else {
       api
@@ -73,11 +67,9 @@ const TaskFooter = ({ _id }: ITaskFooter) => {
           status: Status.todo,
         })
         .then(() => {
-          if (_id) {
-            addToPending(_id);
-            removeFromProgress(_id);
-            removeFromCompleted(_id);
-          }
+          addToPending();
+          removeFromCompleted();
+          removeFromInProgress();
         });
       setIsCompleted(false);
       setIsChecked(false);
@@ -102,6 +94,7 @@ const TaskFooter = ({ _id }: ITaskFooter) => {
   useEffect(() => {
     getStatusById();
   }, []);
+
 
   return (
     <Box

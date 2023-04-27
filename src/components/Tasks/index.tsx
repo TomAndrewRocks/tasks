@@ -8,14 +8,11 @@ import moment from 'moment';
 import { useTaskStore } from '../../contexts/taskStore';
 
 export const TasksView = () => {
-
-  const {todoTask} = useTaskStore()
-
   const [tasks, setTasks] = useState<ITask[]>([]);
   const [todoCount, setTodoCount] = useState(0);
   const [inProgressCount, setInProgressCount] = useState(0);
   const [completedCount, setCompletedCount] = useState(0);
- 
+
   const fetchData = async () => {
     try {
       const response = await api.get('/tasks');
@@ -27,7 +24,7 @@ export const TasksView = () => {
 
   useEffect(() => {
     fetchData();
-  }, [todoTask]);
+  }, []);
 
   const getStatusLength = () => {
     if (tasks) {
@@ -52,11 +49,12 @@ export const TasksView = () => {
 
   return (
     <Grid item md={8} px={4}>
-      <Box mb={8} px={8} width={500} ml={8}>
+      <Box mb={4} px={8} width={500} ml={8}>
         <h2>
           Tasks Manager!
           <br />
-          Date: {moment(Date.now()).format('MM / DD / YYYY')}
+          Date:{' '}
+          {moment(Date.now()).format('MM / DD / YYYY')}
         </h2>
       </Box>
       <Grid
@@ -73,23 +71,26 @@ export const TasksView = () => {
           justifyContent={'space-around'}
           md={10}
           xs={12}
-          mb={8}
+          mb={4}
           ml={2}
         >
           <Box>
             <TaskCounter
+              data={tasks}
               count={todoCount}
               status={'To Do'}
             />
           </Box>
           <Box>
             <TaskCounter
+              data={tasks}
               count={inProgressCount}
               status={'In Progress'}
             />
           </Box>
           <Box>
             <TaskCounter
+              data={tasks}
               count={completedCount}
               status={'Completed'}
             />
@@ -100,12 +101,13 @@ export const TasksView = () => {
           display={'flex'}
           flexDirection={'column'}
           xs={10}
-          md={8}
+          md={9}
         >
           {tasks.map((task) => (
             <Box key={task._id}>
               <TaskItem
                 _id={task._id}
+                data={tasks}
                 date={task.date}
                 title={task.title}
                 description={task.description}

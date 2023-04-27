@@ -9,4 +9,5 @@ export interface ITask
   _id?: string;
   priority: string;
   status?: string;
+  data: ITask[]
 }

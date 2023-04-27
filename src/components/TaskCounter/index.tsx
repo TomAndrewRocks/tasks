@@ -2,6 +2,7 @@ import { Avatar, Box, Typography } from '@mui/material';
 import React, {
   FC,
   ReactElement,
+  useCallback,
   useEffect,
   useState,
 } from 'react';
@@ -10,24 +11,53 @@ import { emitLabel } from '../../helpers/emitLabel';
 import { ITaskCounter } from '../../interfaces/ITaskCounter';
 import { Status } from '../TaskForm/enums/Status';
 import { useTaskStore } from '../../contexts/taskStore';
-import { api } from '../../services/api';
+
+let initialTodo = 0;
+let initialProgress = 0;
+let initialCompleted = 0;
 
 export const TaskCounter: FC<ITaskCounter> = (
   props,
 ): ReactElement => {
-  const { status = Status.completed, count = 0 } = props;
+  const {
+    status = Status.completed,
+    count = 0,
+    data = [],
+  } = props;
 
-  const [pendingCount, setPendingCount] = useState(0);
-  const [inProgressCount, setInProgressCount] = useState(0);
-  const [completedCount, setCompletedCount] = useState(0);
-  const { inProgressTask, todoTask, completedTask } =
-    useTaskStore();
+  const [initTodoCount, setTodoCount] = useState(0);
+  const [initProgressCount, setProgressCount] = useState(0);
+  const [initCompleteCount, setCompleteCount] = useState(0);
+
+  const findStatusMapper = useCallback(() => {
+    const todoCount = data.filter(
+      (task) => task.status === 'To Do',
+    );
+    const progressCount = data.filter(
+      (task) => task.status === 'In Progress',
+    );
+    const completedCount = data.filter(
+      (task) => task.status === 'Completed',
+    );
+
+    initialTodo = todoCount.length;
+    initialProgress = progressCount.length;
+    initialCompleted = completedCount.length;
+
+    setTodoCount(initialTodo);
+    setProgressCount(initialProgress);
+    setCompleteCount(initialCompleted);
+
+    return {
+      initialTodo,
+      initialProgress,
+      initialCompleted,
+    };
+  }, [data]);
 
   useEffect(() => {
-    setPendingCount(todoTask.length);
-    setInProgressCount(inProgressTask.length);
-    setCompletedCount(completedTask.length);
-  }, [todoTask, inProgressTask, completedTask]);
+    findStatusMapper();
+  }, [data]);
 
   return (
     <Box
@@ -47,12 +77,12 @@ export const TaskCounter: FC<ITaskCounter> = (
         }}
       >
         <Typography color="#fff" variant="h4">
-          {count >= 0 &&
+          {count &&
             (status === 'To Do'
-              ? pendingCount
+              ? initTodoCount
               : status === 'In Progress'
-              ? inProgressCount
-              : completedCount)}
+              ? initProgressCount
+              : initCompleteCount)}
         </Typography>
       </Avatar>
       <Typography

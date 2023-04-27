@@ -9,4 +9,5 @@ export type TaskCounterStatusType =
 export interface ITaskCounter {
   count?: number;
   status?: TaskCounterStatusType | any;
+  data: ITask[];
 }
