@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
 const UserSchema = new mongoose.Schema({
   username: {
@@ -26,6 +26,16 @@ const UserSchema = new mongoose.Schema({
   createdAt: {
     type: String,
     default: Date.now(),
+  },
+  tasks: {
+    type: [
+      {
+        task: {
+          type: Schema.Types.ObjectId,
+          ref: 'ITask',
+        },
+      },
+    ],
   },
 });
 
