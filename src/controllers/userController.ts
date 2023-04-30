@@ -34,7 +34,7 @@ const getUserById = (
 };
 
 const createUser = async (req: Request, res: Response) => {
-  const { username, email, password } = req.body;
+  const { email, password } = req.body;
 
   try {
     const userExists = await User.findOne({ email });
@@ -46,7 +46,7 @@ const createUser = async (req: Request, res: Response) => {
       });
     }
 
-    if (!username || !password || !email) {
+    if (!password || !email) {
       return res.status(422).json({
         error: 'Fields not filled',
         message: 'Please fill all the required fields!',
@@ -56,7 +56,6 @@ const createUser = async (req: Request, res: Response) => {
     const salt = randomPass();
 
     const user = await User.create({
-      username,
       email,
       authentication: {
         salt,

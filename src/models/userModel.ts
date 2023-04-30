@@ -2,7 +2,6 @@ import mongoose, { Schema } from 'mongoose';
 import { ITask } from './taskModel';
 
 export interface IUser {
-  username: string;
   email: string;
   authentication: any;
   createdAt: Date;
@@ -10,10 +9,6 @@ export interface IUser {
 }
 
 const UserSchema = new mongoose.Schema<IUser>({
-  username: {
-    type: String,
-    required: true,
-  },
   email: {
     type: String,
     required: true,
