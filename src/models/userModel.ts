@@ -4,7 +4,7 @@ import { ITask } from './taskModel';
 export interface IUser {
   username: string;
   email: string;
-  authentication: Schema.Types.Subdocument;
+  authentication: any;
   createdAt: Date;
   tasks: ITask[];
 }
