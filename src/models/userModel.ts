@@ -1,6 +1,15 @@
 import mongoose, { Schema } from 'mongoose';
+import { ITask } from './taskModel';
 
-const UserSchema = new mongoose.Schema({
+export interface IUser {
+  username: string;
+  email: string;
+  authentication: Schema.Types.Subdocument;
+  createdAt: Date;
+  tasks: ITask[];
+}
+
+const UserSchema = new mongoose.Schema<IUser>({
   username: {
     type: String,
     required: true,
@@ -24,7 +33,7 @@ const UserSchema = new mongoose.Schema({
     type: Object,
   },
   createdAt: {
-    type: String,
+    type: Date,
     default: Date.now(),
   },
   tasks: {
