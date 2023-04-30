@@ -1,4 +1,9 @@
-import { Box, Grid } from '@mui/material';
+import {
+  Box,
+  CircularProgress,
+  Grid,
+  Typography,
+} from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { TaskItem } from '../Task';
 import { TaskCounter } from '../TaskCounter';
@@ -12,13 +17,21 @@ export const TasksView = () => {
   const [todoCount, setTodoCount] = useState(0);
   const [inProgressCount, setInProgressCount] = useState(0);
   const [completedCount, setCompletedCount] = useState(0);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [success, setSuccess] = useState<boolean>(false);
+  const [failed, setFailed] = useState<boolean>(false);
 
   const fetchData = async () => {
+    setLoading(true);
     try {
       const response = await api.get('/tasks');
+      setSuccess(true)
       setTasks(response.data);
     } catch (error) {
+      setFailed(true)
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -103,19 +116,33 @@ export const TasksView = () => {
           xs={10}
           md={9}
         >
-          {tasks.map((task) => (
-            <Box key={task._id}>
-              <TaskItem
-                _id={task._id}
-                data={tasks}
-                date={task.date}
-                title={task.title}
-                description={task.description}
-                status={task.status}
-                priority={task.priority}
-              />
+          {tasks.length > 1 ? (
+            tasks.map((task) => (
+              <Box key={task._id}>
+                <TaskItem
+                  _id={task._id}
+                  data={tasks}
+                  date={task.date}
+                  title={task.title}
+                  description={task.description}
+                  status={task.status}
+                  priority={task.priority}
+                />
+              </Box>
+            ))
+          ) : (
+            <Box
+              display={'flex'}
+              flexDirection={'column'}
+              alignItems={'center'}
+              justifyContent={'center'}
+              mt={30}
+              gap={5}
+            >
+              <CircularProgress />
+              <Typography>Carregando suas tasks</Typography>
             </Box>
-          ))}
+          )}
         </Grid>
       </Grid>
     </Grid>
