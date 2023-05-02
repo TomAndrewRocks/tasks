@@ -7,33 +7,14 @@ import {
 import React, { useEffect, useState } from 'react';
 import { TaskItem } from '../Task';
 import { TaskCounter } from '../TaskCounter';
-import { api } from '../../services/api';
-import { ITask } from '../../interfaces/ITask';
 import moment from 'moment';
-import { useTaskStore } from '../../contexts/taskStore';
+import { useAuth } from '../../hooks/useAuth';
 
 export const TasksView = () => {
-  const [tasks, setTasks] = useState<ITask[]>([]);
+  const { tasks, fetchData } = useAuth();
   const [todoCount, setTodoCount] = useState(0);
   const [inProgressCount, setInProgressCount] = useState(0);
   const [completedCount, setCompletedCount] = useState(0);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [success, setSuccess] = useState<boolean>(false);
-  const [failed, setFailed] = useState<boolean>(false);
-
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      const response = await api.get('/tasks');
-      setSuccess(true)
-      setTasks(response.data);
-    } catch (error) {
-      setFailed(true)
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
     fetchData();
@@ -61,12 +42,20 @@ export const TasksView = () => {
   }, [tasks]);
 
   return (
-    <Grid item md={8} px={4}>
-      <Box mb={4} px={8} width={500} ml={8}>
+    <Grid item md={8} px={25}>
+      <Box
+        mb={4}
+        px={8}
+        width={700}
+        ml={8}
+        display={'flex'}
+        alignItems={'center'}
+        justifyContent={'center'}
+      >
         <h2>
-          Tasks Manager!
-          <br />
-          Date:{' '}
+          Tasks Manager
+          <br/>
+           Date:{' '}
           {moment(Date.now()).format('MM / DD / YYYY')}
         </h2>
       </Box>
@@ -116,7 +105,7 @@ export const TasksView = () => {
           xs={10}
           md={9}
         >
-          {tasks.length > 1 ? (
+          {tasks.length >= 1 ? (
             tasks.map((task) => (
               <Box key={task._id}>
                 <TaskItem

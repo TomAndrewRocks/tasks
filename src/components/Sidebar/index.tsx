@@ -2,14 +2,8 @@ import { Grid } from '@mui/material';
 import React, { FC, ReactElement, useEffect } from 'react';
 import { Profile } from '../Profile';
 import { TaskForm } from '../TaskForm';
-import { useAuth } from '../../hooks/useAuth';
 
 export const Sidebar: FC = (): ReactElement => {
-  const { handleLogout, email, isUserAuth } = useAuth();
-
-  useEffect(() => {
-    console.log(email);
-  }, [email, isUserAuth]);
 
   return (
     <Grid
@@ -30,7 +24,6 @@ export const Sidebar: FC = (): ReactElement => {
     >
       <Profile name="Bondo" />
       <TaskForm />
-      <button onClick={handleLogout}>logout</button>
     </Grid>
   );
 };

@@ -1,5 +1,4 @@
 import { Box, Chip, Typography } from '@mui/material';
-import { format } from 'date-fns';
 import React, { FC, ReactElement } from 'react';
 import { ITaskHeader } from '../../../interfaces/ITaskHeader';
 import moment from 'moment';
@@ -16,7 +15,7 @@ export const TaskHeader: FC<ITaskHeader> = (
       mb={4}
     >
       <Box>
-        <Typography variant="h6">{title}</Typography>
+        <Typography variant="h6" width={200}>{title}</Typography>
       </Box>
       <Box>
         <Chip

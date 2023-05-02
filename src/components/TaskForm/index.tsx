@@ -19,9 +19,13 @@ import { TitleInput } from '../Inputs/TitleInput';
 import { Priority } from './enums/Priority';
 import { Status } from './enums/Status';
 import { api } from '../../services/api';
+import { useAuth } from '../../hooks/useAuth';
 import { useTaskStore } from '../../contexts/taskStore';
+import powerSvg from '../../assets/power.svg';
 
 export const TaskForm: FC = (): ReactElement => {
+  const { fetchData, handleLogout } = useAuth();
+  const { addToPending } = useTaskStore();
   const [title, setTitle] = useState<string | undefined>(
     '',
   );
@@ -56,8 +60,10 @@ export const TaskForm: FC = (): ReactElement => {
             status: status,
             priority: priority,
           })
-          .then(() => {
+          .then((res) => {
+            addToPending(res.data._id)
             setSuccessReturn(true);
+            fetchData();
           })
           .catch((err) => {
             console.log(err);
@@ -88,6 +94,12 @@ export const TaskForm: FC = (): ReactElement => {
       px={4}
       my={successReturn || failReturn ? -2.5 : 2}
     >
+      <Box position={'absolute'} bottom={20} right={20}>
+        <Button onClick={handleLogout}>
+          <img src={powerSvg} width={30} height={50}/>
+        </Button>
+      </Box>
+
       {successReturn && (
         <Alert
           severity="success"

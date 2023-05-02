@@ -11,6 +11,7 @@ import { emitLabel } from '../../helpers/emitLabel';
 import { ITaskCounter } from '../../interfaces/ITaskCounter';
 import { Status } from '../TaskForm/enums/Status';
 import { useTaskStore } from '../../contexts/taskStore';
+import { useFirstRender } from 'react-haiku';
 
 let initialTodo = 0;
 let initialProgress = 0;
@@ -28,6 +29,17 @@ export const TaskCounter: FC<ITaskCounter> = (
   const [initTodoCount, setTodoCount] = useState(0);
   const [initProgressCount, setProgressCount] = useState(0);
   const [initCompleteCount, setCompleteCount] = useState(0);
+
+  const { todoTask, completedTask, inProgressTask } =
+    useTaskStore();
+
+  const isFirst = useFirstRender();
+
+  useEffect(() => {
+    console.log(todoTask.length);
+    console.log(completedTask.length);
+    console.log(inProgressTask.length);
+  }, [todoTask, completedTask, inProgressTask]);
 
   const findStatusMapper = useCallback(() => {
     const todoCount = data.filter(
@@ -53,11 +65,11 @@ export const TaskCounter: FC<ITaskCounter> = (
       initialProgress,
       initialCompleted,
     };
-  }, [data]);
+  }, [data, todoTask]);
 
   useEffect(() => {
     findStatusMapper();
-  }, [data]);
+  }, [data, todoTask]);
 
   return (
     <Box
@@ -77,12 +89,17 @@ export const TaskCounter: FC<ITaskCounter> = (
         }}
       >
         <Typography color="#fff" variant="h4">
-          {count &&
-            (status === 'To Do'
+          {isFirst
+            ? status === 'To Do'
               ? initTodoCount
               : status === 'In Progress'
               ? initProgressCount
-              : initCompleteCount)}
+              : initCompleteCount
+            : status === 'To Do'
+            ? todoTask.length
+            : status === 'In Progress'
+            ? inProgressTask.length
+            : completedTask.length}
         </Typography>
       </Avatar>
       <Typography

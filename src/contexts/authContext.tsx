@@ -9,12 +9,14 @@ import React, {
 } from 'react';
 import { api } from '../services/api';
 import { useNavigate } from 'react-router-dom';
+import { ITask } from '../interfaces/ITask';
 
 interface StateInitialProps {
   isUserAuth: boolean;
   loading: boolean;
   setIsLoading: Dispatch<SetStateAction<boolean>>;
-
+  tasks: ITask[];
+  fetchData: () => void;
   handleLogin: () => void;
   handleRegister: () => void;
   handleLogout: () => void;
@@ -29,6 +31,10 @@ interface StateInitialProps {
 const initialState: StateInitialProps = {
   isUserAuth: false,
   loading: false,
+  tasks: [],
+  fetchData: () => {
+    ('');
+  },
   setIsLoading: () => {
     ('');
   },
@@ -64,6 +70,8 @@ export const AuthContext = createContext(initialState);
 export const AuthProvider = ({
   children,
 }: ContextProps) => {
+  const [tasks, setTasks] = useState<ITask[]>([]);
+
   const [isUserAuth, setUserAuth] =
     useState<boolean>(false);
   const [loading, setIsLoading] = useState(false);
@@ -72,6 +80,15 @@ export const AuthProvider = ({
   const [password, setPassword] = useState<string>('');
 
   const navigate = useNavigate();
+
+  const fetchData = async () => {
+    try {
+      const response = await api.get('/tasks');
+      setTasks(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleLogin = () => {
     try {
@@ -131,6 +148,8 @@ export const AuthProvider = ({
   return (
     <AuthContext.Provider
       value={{
+        tasks,
+        fetchData,
         isUserAuth,
         loading,
         setIsLoading,

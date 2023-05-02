@@ -9,16 +9,22 @@ import { useAuth } from '../../hooks/useAuth';
 
 export const AuthView: FC = (): ReactElement => {
   const {
-    loading,
+    // loading,
     formType,
     handleLogin,
     handleRegister,
     handleFormType,
-    setIsLoading,
+    // setIsLoading,
   } = useAuth();
 
+  const [loading, setIsLoading] = useState(false);
+
+  const setLoading = () => {
+    setIsLoading(!loading);
+  };
+
   const handleAuthentication = () => {
-    setIsLoading(true);
+    setLoading();
     try {
       if (formType === 'Sign In') {
         handleLogin();
@@ -29,7 +35,7 @@ export const AuthView: FC = (): ReactElement => {
     } catch (error) {
       console.log(error);
     } finally {
-      setIsLoading(false);
+      setIsLoading(!loading)
     }
   };
 
