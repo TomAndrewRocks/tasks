@@ -92,7 +92,7 @@ const loginUser = async (req: Request, res: Response) => {
     if (!user) {
       console.log(user);
       return res.status(400).json({
-        message: 'User not signed up',
+        message: 'Invalid e-mail!',
       });
     }
 
