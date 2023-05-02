@@ -1,6 +1,9 @@
 import {
+  Alert,
+  AlertColor,
   Grid,
   LinearProgress,
+  Snackbar,
   Typography,
 } from '@mui/material';
 import React, { FC, ReactElement, useState } from 'react';
@@ -9,18 +12,24 @@ import { useAuth } from '../../hooks/useAuth';
 
 export const AuthView: FC = (): ReactElement => {
   const {
-    // loading,
     formType,
     handleLogin,
     handleRegister,
     handleFormType,
-    // setIsLoading,
   } = useAuth();
 
   const [loading, setIsLoading] = useState(false);
+  const [hotMessage, setHotMessage] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [messageLevel, setMessageLevel] =
+    useState<AlertColor>('info');
 
   const setLoading = () => {
     setIsLoading(!loading);
+  };
+
+  const handleClose = () => {
+    setHotMessage(false);
   };
 
   const handleAuthentication = () => {
@@ -32,10 +41,14 @@ export const AuthView: FC = (): ReactElement => {
       if (formType === 'Sign Up') {
         handleRegister();
       }
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 2000);
     } catch (error) {
       console.log(error);
-    } finally {
-      setIsLoading(!loading)
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 2000);
     }
   };
 
@@ -72,6 +85,7 @@ export const AuthView: FC = (): ReactElement => {
       </Typography>
       <AuthForm
         type={formType}
+        loading={loading}
         onClick={handleAuthentication}
       />
       <Typography
@@ -85,6 +99,19 @@ export const AuthView: FC = (): ReactElement => {
           ? 'Not registered? Sign up in here!'
           : 'Already registered? Sign in here!'}
       </Typography>
+      <Snackbar
+        open={hotMessage}
+        autoHideDuration={6000}
+        onClose={handleClose}
+      >
+        <Alert
+          onClose={handleClose}
+          severity={messageLevel}
+          sx={{ width: '100%' }}
+        >
+          {alertMessage}
+        </Alert>
+      </Snackbar>
     </Grid>
   );
 };

@@ -35,12 +35,6 @@ export const TaskCounter: FC<ITaskCounter> = (
 
   const isFirst = useFirstRender();
 
-  useEffect(() => {
-    console.log(todoTask.length);
-    console.log(completedTask.length);
-    console.log(inProgressTask.length);
-  }, [todoTask, completedTask, inProgressTask]);
-
   const findStatusMapper = useCallback(() => {
     const todoCount = data.filter(
       (task) => task.status === 'To Do',

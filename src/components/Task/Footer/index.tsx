@@ -77,6 +77,7 @@ const TaskFooter = ({ _id }: ITaskFooter) => {
         })
         .then(() => {
           setIsCompleted(false);
+          setIsChecked(false)
           if (_id) {
             addToPending(_id);
             removeFromCompleted(_id);

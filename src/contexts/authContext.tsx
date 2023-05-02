@@ -16,6 +16,7 @@ interface StateInitialProps {
   loading: boolean;
   setIsLoading: Dispatch<SetStateAction<boolean>>;
   tasks: ITask[];
+  errorMessage: string;
   fetchData: () => void;
   handleLogin: () => void;
   handleRegister: () => void;
@@ -31,6 +32,7 @@ interface StateInitialProps {
 const initialState: StateInitialProps = {
   isUserAuth: false,
   loading: false,
+  errorMessage: '',
   tasks: [],
   fetchData: () => {
     ('');
@@ -78,6 +80,7 @@ export const AuthProvider = ({
   const [formType, setFormType] = useState('Sign In');
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const navigate = useNavigate();
 
@@ -103,11 +106,16 @@ export const AuthProvider = ({
           }, 750);
         })
         .catch((err) => {
-          alert('ERROR');
-          console.log(err);
+          if (err) {
+            console.log(err.response.data.message);
+            setErrorMessage(err.response.data.message);
+          } 
+          if(!err) {
+            setErrorMessage('')
+          }
         });
     } catch (error) {
-      alert('SERVER ERROR');
+      console.log('SERVER ERROR');
     }
   };
 
@@ -162,6 +170,7 @@ export const AuthProvider = ({
         setEmail,
         password,
         setPassword,
+        errorMessage,
       }}
     >
       {children}

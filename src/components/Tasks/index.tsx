@@ -51,11 +51,11 @@ export const TasksView = () => {
         display={'flex'}
         alignItems={'center'}
         justifyContent={'center'}
+        textAlign={'center'}
       >
         <h2>
           Tasks Manager
           <br/>
-           Date:{' '}
           {moment(Date.now()).format('MM / DD / YYYY')}
         </h2>
       </Box>
