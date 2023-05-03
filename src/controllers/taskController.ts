@@ -14,7 +14,9 @@ const createTask = async (req: Request, res: Response) => {
   const { title, description, status, priority } = req.body;
 
   try {
-    const taskTitleExists = await taskModel.findOne({ title });
+    const taskTitleExists = await taskModel.findOne({
+      title,
+    });
 
     if (taskTitleExists) {
       return res.status(400).json({
@@ -29,7 +31,15 @@ const createTask = async (req: Request, res: Response) => {
       priority,
       status,
     });
-    return res.status(201).json(task);
+    const userTasks = task.populate('tasks.task', [
+      {
+        strictPopulate: false,
+      },
+    ]);
+    const result = () => {
+      return { task, userTasks };
+    };
+    return res.status(201).json(result);
   } catch (error) {
     return res.status(500).send({
       error: 'Task register failed',
@@ -76,8 +86,7 @@ const updateTask = (
           })
           .catch((error) => {
             return res.status(404).json({
-              message:
-                'Failed update of the selected Task',
+              message: 'Failed update of the selected Task',
             });
           });
       }

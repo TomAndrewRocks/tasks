@@ -36,10 +36,12 @@ const UserSchema = new mongoose.Schema<IUser>({
       {
         task: {
           type: Schema.Types.ObjectId,
+          required: true,
           ref: 'ITask',
         },
       },
     ],
+    required: true,
   },
 });
 
