@@ -4,7 +4,12 @@ import {
   Typography,
   Stack,
 } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, {
+  ChangeEvent,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import { TextInput } from '../Inputs/TextInput';
 import { useAuth } from '../../hooks/useAuth';
 import { IAuthForm } from '../../interfaces/IAuthForm';
@@ -21,6 +26,7 @@ export const AuthForm = ({
     setEmail,
     errorMessage,
     setPassword,
+    formType,
   } = useAuth();
 
   const isEdging = useMediaQuery('(max-width: 540px)');
@@ -37,12 +43,65 @@ export const AuthForm = ({
     }
   }, [errorMessage]);
 
+  const isValidEmail = (email: string) => {
+    return /\S+@\S+\.\S+/.test(email);
+  };
+
+  const handleEmailChange = useCallback(
+    (
+      e: ChangeEvent<
+        HTMLInputElement | HTMLTextAreaElement
+      >,
+    ) => {
+      if (formType === 'Sign Up') {
+        if (!isValidEmail(e.target.value) && email != '') {
+          setErrorEmail('Email is invalid');
+        } else {
+          setErrorEmail('');
+        }
+      }
+      setEmail(e.target.value);
+    },
+    [email],
+  );
+
+  const handlePasswordChange = useCallback(
+    (
+      e: ChangeEvent<
+        HTMLInputElement | HTMLTextAreaElement
+      >,
+    ) => {
+      if (formType === 'Sign Up') {
+        if (password.length <= 5) {
+          setErrorPass(
+            'Password needs to be longer than that!',
+          );
+        } else {
+          setErrorPass('');
+        }
+      }
+
+      setPassword(e.target.value);
+    },
+    [password],
+  );
+
   useEffect(() => {
     if (loading) {
       setErrorEmail('');
       setErrorPass('');
     }
   }, [loading]);
+
+  useEffect(() => {
+    if (
+      formType === 'Sign In' &&
+      (email != '' || password != '')
+    ) {
+      setErrorEmail('');
+      setErrorPass('');
+    }
+  }, [email, password]);
 
   return (
     <Box width={isEdging ? 300 : 500}>
@@ -51,9 +110,10 @@ export const AuthForm = ({
           <TextInput
             title="E-mail"
             value={email}
+            type="e-mail"
             disabled={loading}
             placeholder="Type your e-mail"
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={handleEmailChange}
           />
           <Typography
             component={'p'}
@@ -68,7 +128,7 @@ export const AuthForm = ({
             type="password"
             disabled={loading}
             placeholder="Type your password"
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={handlePasswordChange}
           />
           <Typography
             component={'p'}
@@ -82,13 +142,9 @@ export const AuthForm = ({
             size="large"
             fullWidth
             onClick={onClick}
-            // disabled={
-            //   !title ||
-            //   !description ||
-            //   !status ||
-            //   !priority ||
-            //   loading
-            // }
+            disabled={
+              (errorEmail != '' || errorPass != '') && true
+            }
           >
             {type === 'Sign In' ? 'Sign In' : 'Sign Up'}
           </Button>

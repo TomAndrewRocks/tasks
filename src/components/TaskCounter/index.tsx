@@ -4,6 +4,7 @@ import React, {
   ReactElement,
   useCallback,
   useEffect,
+  useMemo,
   useState,
 } from 'react';
 import { emitBorderColor } from '../../helpers/emitBorderColor';
@@ -65,6 +66,26 @@ export const TaskCounter: FC<ITaskCounter> = (
     findStatusMapper();
   }, [data, todoTask]);
 
+  const countStatus = useMemo(() => {
+    if (isFirst) {
+      if (status === 'To Do') {
+        return initTodoCount;
+      }
+      if (status === 'In Progress') {
+        return initProgressCount;
+      }
+      return initCompleteCount;
+    } else {
+      if (status === 'To Do') {
+        return todoTask.length;
+      }
+      if (status === 'In Progress') {
+        return inProgressTask.length;
+      }
+      return completedTask.length;
+    }
+  }, [isFirst, todoTask, inProgressTask, completedTask]);
+
   return (
     <Box
       display={'flex'}
@@ -83,17 +104,7 @@ export const TaskCounter: FC<ITaskCounter> = (
         }}
       >
         <Typography color="#fff" variant="h4">
-          {isFirst
-            ? status === 'To Do'
-              ? initTodoCount
-              : status === 'In Progress'
-              ? initProgressCount
-              : initCompleteCount
-            : status === 'To Do'
-            ? todoTask.length
-            : status === 'In Progress'
-            ? inProgressTask.length
-            : completedTask.length}
+          {countStatus}
         </Typography>
       </Avatar>
       <Typography

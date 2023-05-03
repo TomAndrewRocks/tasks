@@ -6,10 +6,14 @@ import React, {
   useEffect,
   Dispatch,
   SetStateAction,
+  useLayoutEffect,
 } from 'react';
 import { api } from '../services/api';
 import { useNavigate } from 'react-router-dom';
 import { ITask } from '../interfaces/ITask';
+import { useUsersStore } from './userStore';
+import { ToastAlert } from '../components/Toast';
+import { AlertColor } from '@mui/material';
 
 interface StateInitialProps {
   isUserAuth: boolean;
@@ -81,14 +85,26 @@ export const AuthProvider = ({
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [openToast, setOpenToast] = useState(false);
+  const [toastSeverity, setToastLevel] =
+    useState<AlertColor>('info');
+  const [toastMsg, setToastMsg] = useState('');
+  const { auth, setEmailUser } = useUsersStore();
 
   const navigate = useNavigate();
 
+  const closePopUp = () => {
+    setOpenToast(false);
+  };
+
   const fetchData = async () => {
     try {
-      const response = await api.get('/tasks');
-      setTasks(response.data);
+      const response = await api.get(
+        `/user/${auth.userEmail}`,
+      );
+      setTasks(response.data.user.tasks);
     } catch (error) {
+      navigate('/app');
       console.log(error);
     }
   };
@@ -99,23 +115,29 @@ export const AuthProvider = ({
         .post('/login', { email, password })
         .then(() => {
           setUserAuth(true);
+          setEmailUser(email);
+          setOpenToast(true);
+          setToastLevel('success');
+          setToastMsg('Successfully logging you in!');
           setTimeout(() => {
             navigate('/dashboard');
             setEmail('');
             setPassword('');
-          }, 750);
+          }, 1500);
         })
         .catch((err) => {
           if (err) {
-            console.log(err.response.data.message);
             setErrorMessage(err.response.data.message);
-          } 
-          if(!err) {
-            setErrorMessage('')
+          }
+          if (!err) {
+            setErrorMessage('');
           }
         });
     } catch (error) {
       console.log('SERVER ERROR');
+      setOpenToast(true);
+      setToastLevel('error');
+      setToastMsg('500 Internal Server');
     }
   };
 
@@ -125,6 +147,9 @@ export const AuthProvider = ({
         .post('/register', { email, password })
         .then(() => {
           setFormType('Sign In');
+          setOpenToast(true);
+          setToastLevel('success');
+          setToastMsg('Email successfully registered!');
           setEmail('');
           setPassword('');
         });
@@ -134,12 +159,19 @@ export const AuthProvider = ({
   };
 
   const handleLogout = () => {
+    setOpenToast(true);
+    setToastLevel('info');
+    setToastMsg('Logging out!');
     setTimeout(() => {
       setUserAuth(false);
-    }, 750);
+      localStorage.removeItem('auth-store');
+      navigate('/app');
+    }, 1500);
   };
 
   const handleFormType = () => {
+    setErrorMessage('');
+
     if (formType === 'Sign In') {
       setFormType('Sign Up');
     }
@@ -173,6 +205,12 @@ export const AuthProvider = ({
         errorMessage,
       }}
     >
+      <ToastAlert
+        open={openToast}
+        onClose={closePopUp}
+        severity={toastSeverity}
+        message={toastMsg}
+      />
       {children}
     </AuthContext.Provider>
   );

@@ -4,7 +4,7 @@ import {
   Grid,
   Typography,
 } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { TaskItem } from '../Task';
 import { TaskCounter } from '../TaskCounter';
 import moment from 'moment';
@@ -41,6 +41,53 @@ export const TasksView = () => {
     getStatusLength();
   }, [tasks]);
 
+  const tasksComponent = useMemo(() => {
+    if (tasks.length < 1) {
+      return (
+        <Box
+          display={'flex'}
+          flexDirection={'column'}
+          alignItems={'center'}
+          justifyContent={'center'}
+          mt={30}
+          gap={5}
+        >
+          <Typography>
+            You have no tasks! Go for it, man!
+          </Typography>
+        </Box>
+      );
+    }
+    if (tasks.length >= 1) {
+      tasks.map((task) => (
+        <Box key={task._id}>
+          <TaskItem
+            _id={task._id}
+            data={tasks}
+            date={task.date}
+            title={task.title}
+            description={task.description}
+            status={task.status}
+            priority={task.priority}
+          />
+        </Box>
+      ));
+    }
+    return (
+      <Box
+        display={'flex'}
+        flexDirection={'column'}
+        alignItems={'center'}
+        justifyContent={'center'}
+        mt={30}
+        gap={5}
+      >
+        <CircularProgress />
+        <Typography>Loading your tasks...</Typography>
+      </Box>
+    );
+  }, [tasks, fetchData]);
+
   return (
     <Grid item md={8} px={25}>
       <Box
@@ -55,7 +102,7 @@ export const TasksView = () => {
       >
         <h2>
           Tasks Manager
-          <br/>
+          <br />
           {moment(Date.now()).format('MM / DD / YYYY')}
         </h2>
       </Box>
@@ -105,33 +152,7 @@ export const TasksView = () => {
           xs={10}
           md={9}
         >
-          {tasks.length >= 1 ? (
-            tasks.map((task) => (
-              <Box key={task._id}>
-                <TaskItem
-                  _id={task._id}
-                  data={tasks}
-                  date={task.date}
-                  title={task.title}
-                  description={task.description}
-                  status={task.status}
-                  priority={task.priority}
-                />
-              </Box>
-            ))
-          ) : (
-            <Box
-              display={'flex'}
-              flexDirection={'column'}
-              alignItems={'center'}
-              justifyContent={'center'}
-              mt={30}
-              gap={5}
-            >
-              <CircularProgress />
-              <Typography>Carregando suas tasks</Typography>
-            </Box>
-          )}
+          {tasksComponent}
         </Grid>
       </Grid>
     </Grid>

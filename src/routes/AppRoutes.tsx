@@ -10,11 +10,9 @@ import {
 import { useTransition, animated } from 'react-spring';
 import { Dashboard } from '../pages/Dashboard';
 import { AuthView } from '../pages/Auth';
-import { useAuth } from '../hooks/useAuth';
-import { customTheme } from '../theme/general';
-import { CssBaseline, ThemeProvider } from '@mui/material';
-import { App } from '../App';
+import { CssBaseline } from '@mui/material';
 import { AuthProvider } from '../contexts/authContext';
+import { useUsersStore } from '../contexts/userStore';
 
 const AnimationLayout = () => {
   const location = useLocation();
@@ -35,9 +33,9 @@ const AnimationLayout = () => {
 };
 
 const PrivateRoutes = () => {
-  const { isUserAuth } = useAuth();
+  const { auth } = useUsersStore();
 
-  return isUserAuth ? <Outlet /> : <Navigate to="/app" />;
+  return auth.active ? <Outlet /> : <Navigate to="/app" />;
 };
 
 export const AppRoutes = () => {
@@ -53,7 +51,10 @@ export const AppRoutes = () => {
           />
           <Route path="/app" element={<AuthView />} />
           <Route element={<PrivateRoutes />}>
-            <Route path="/dashboard" element={<App />} />
+            <Route
+              path="/dashboard"
+              element={<Dashboard />}
+            />
           </Route>
         </Route>
       </Routes>

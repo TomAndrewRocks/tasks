@@ -1,6 +1,7 @@
 import {
   Alert,
   AlertColor,
+  Box,
   Grid,
   LinearProgress,
   Snackbar,
@@ -76,29 +77,41 @@ export const AuthView: FC = (): ReactElement => {
           }}
         />
       )}
-      <Typography
-        variant="h3"
-        component="h2"
-        color={'white'}
+      <Box
+        display={'flex'}
+        alignItems={'center'}
+        flexDirection={'column'}
+        gap={4}
+        sx={{
+          background: '#101010',
+          padding: 4,
+          borderRadius: 1
+        }}
       >
-        {formType}
-      </Typography>
-      <AuthForm
-        type={formType}
-        loading={loading}
-        onClick={handleAuthentication}
-      />
-      <Typography
-        variant="h6"
-        component={'h6'}
-        color={'white'}
-        sx={{ cursor: 'pointer' }}
-        onClick={handleFormType}
-      >
-        {formType === 'Sign In'
-          ? 'Not registered? Sign up in here!'
-          : 'Already registered? Sign in here!'}
-      </Typography>
+        <Typography
+          variant="h3"
+          component="h2"
+          color={'white'}
+        >
+          {formType}
+        </Typography>
+        <AuthForm
+          type={formType}
+          loading={loading}
+          onClick={handleAuthentication}
+        />
+        <Typography
+          variant="h6"
+          component={'h6'}
+          color={'white'}
+          sx={{ cursor: 'pointer' }}
+          onClick={handleFormType}
+        >
+          {formType === 'Sign In'
+            ? 'Not registered? Sign up in here!'
+            : 'Already registered? Sign in here!'}
+        </Typography>
+      </Box>
       <Snackbar
         open={hotMessage}
         autoHideDuration={6000}
