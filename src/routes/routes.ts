@@ -10,7 +10,7 @@ import { updateValidator } from '../utils/validator';
 import {
   createUser,
   getAllUsers,
-  getUserById,
+  getUserByEmail,
   loginUser,
 } from '../controllers/userController';
 
@@ -23,7 +23,7 @@ router.put('/tasks/:id', updateValidator, updateTask);
 router.delete('/tasks/:id', deleteTask);
 //authentication
 router.get('/users', getAllUsers);
-router.get('/user/:id', getUserById);
+router.get('/user/:email', getUserByEmail);
 router.post('/register', createUser);
 router.post('/login', loginUser);
 export default router;

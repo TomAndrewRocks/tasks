@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import User from '../models/userModel';
 import {
   authentication,
@@ -14,19 +14,14 @@ const getAllUsers = async (req: Request, res: Response) => {
   }
 };
 
-const getUserById = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  const userId = req.params.id;
+const getUserByEmail = (req: Request, res: Response) => {
+  const email: String = req.params.email;
+
   try {
-    return User.findById(userId).then((user) =>
+    return User.findOne({ email }).then((user) =>
       user
-        ? res.status(200).json({ user: user })
-        : res
-            .status(404)
-            .json({ message: 'User not found!' }),
+        ? res.status(200).json({ user })
+        : res.status(404).json('User not found'),
     );
   } catch (error) {
     return res.status(500).json({ error });
@@ -132,4 +127,9 @@ const loginUser = async (req: Request, res: Response) => {
   }
 };
 
-export { createUser, getAllUsers, getUserById, loginUser };
+export {
+  createUser,
+  getAllUsers,
+  loginUser,
+  getUserByEmail,
+};
