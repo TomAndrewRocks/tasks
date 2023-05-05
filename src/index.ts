@@ -15,7 +15,7 @@ const port = process.env.PORT || 5555;
 
 const startServer = async () => {
   try {
-    await mongoose.connect(process.env.ATLAS_URL!);
+    await mongoose.connect(`${process.env.ATLAS_URL}`);
     app.use(
       (req: Request, res: Response, next: NextFunction) => {
         res.setHeader(
