@@ -11,7 +11,7 @@ import swaggerDocument from './docs/swagger.json';
 
 dotenv.config();
 
-const port: string | undefined = process.env.PORT;
+const port = process.env.PORT || 5555;
 
 const startServer = async () => {
   try {
