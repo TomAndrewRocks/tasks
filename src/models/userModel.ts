@@ -1,4 +1,4 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose from 'mongoose';
 import { ITask } from './taskModel';
 
 export interface IUser {
@@ -30,18 +30,6 @@ const UserSchema = new mongoose.Schema<IUser>({
   createdAt: {
     type: Date,
     default: Date.now(),
-  },
-  tasks: {
-    type: [
-      {
-        task: {
-          type: Schema.Types.ObjectId,
-          required: true,
-          ref: 'ITask',
-        },
-      },
-    ],
-    required: true,
   },
 });
 

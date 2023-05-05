@@ -8,6 +8,7 @@ export interface ITask {
   description: string;
   priority: Priority;
   status: Status;
+  user: string;
 }
 
 const TaskSchema = new Schema<ITask>({
@@ -31,6 +32,10 @@ const TaskSchema = new Schema<ITask>({
   priority: {
     type: String,
     default: Priority.normal,
+    required: true,
+  },
+  user: {
+    type: String,
     required: true,
   },
 });
