@@ -41,9 +41,16 @@ const createUser = async (req: Request, res: Response) => {
       });
     }
 
-    if (!password || !email) {
+    if (!password) {
       return res.status(422).json({
-        error: 'Fields not filled',
+        error: 'Fill your password',
+        message: 'Please fill all the required fields!',
+      });
+    }
+
+    if (!email) {
+      return res.status(422).json({
+        error: 'Fill your email',
         message: 'Please fill all the required fields!',
       });
     }
@@ -119,7 +126,7 @@ const loginUser = async (req: Request, res: Response) => {
       },
     );
 
-    return res.status(201).json({
+    return res.status(200).json({
       message: 'Successfully signed in!',
     });
   } catch (error) {

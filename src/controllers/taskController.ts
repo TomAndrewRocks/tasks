@@ -14,16 +14,16 @@ const createTask = async (req: Request, res: Response) => {
   const { title, description, status, priority, user } = req.body;
 
   try {
-    const taskTitleExists = await taskModel.findOne({
-      title,
-    });
+    // const taskTitleExists = await taskModel.findOne({
+    //   title,
+    // });
 
-    if (taskTitleExists) {
-      return res.status(400).json({
-        error: 'Oops',
-        message: 'Task already registered',
-      });
-    }
+    // if (taskTitleExists) {
+    //   return res.status(400).json({
+    //     error: 'Oops',
+    //     message: 'Task already registered',
+    //   });
+    // }
 
     const task = await taskModel.create({
       title,

@@ -1,38 +1,33 @@
-import mongoose from 'mongoose';
-import { ITask } from './taskModel';
+import { Schema, model } from 'mongoose';
 
-export interface IUser {
-  email: string;
-  authentication: any;
-  createdAt: Date;
-  tasks: ITask[];
-}
-
-const UserSchema = new mongoose.Schema<IUser>({
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  authentication: {
-    password: {
+const UserSchema = new Schema(
+  {
+    email: {
       type: String,
       required: true,
-      select: false,
+      unique: true,
     },
-    salt: {
-      type: String,
-      select: false,
+    authentication: {
+      password: {
+        type: String,
+        required: true,
+        select: false,
+      },
+      salt: {
+        type: String,
+        select: false,
+      },
+      sessionToken: { type: String, select: false },
+      type: Object,
     },
-    sessionToken: { type: String, select: false },
-    type: Object,
+    createdAt: {
+      type: Date,
+      default: Date.now(),
+    },
   },
-  createdAt: {
-    type: Date,
-    default: Date.now(),
-  },
-});
+  { timestamps: true },
+);
 
-const User = mongoose.model('User', UserSchema);
+const User = model('User', UserSchema);
 
 export default User;

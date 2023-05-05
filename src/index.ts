@@ -15,7 +15,7 @@ const port: string | undefined = process.env.PORT;
 
 const startServer = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URL!);
+    await mongoose.connect(process.env.ATLAS_URL!);
     app.use(
       (req: Request, res: Response, next: NextFunction) => {
         res.setHeader(
